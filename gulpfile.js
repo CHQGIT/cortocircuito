@@ -58,7 +58,7 @@ gulp.task('html', function(){
 });
 
 gulp.task('watch', function(){
-  gulp.watch(['css/*.scss'].map(realPath), ['sass']);
+  gulp.watch(['css/*.scss'].map(realPath), ['sass'],['css']);
   gulp.watch(['*.html']);
 
 

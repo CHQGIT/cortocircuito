@@ -52,6 +52,7 @@
     "gulp-swig": "^0.8.0",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
+    "rc-tooltip": "^3.4.2",
     "react": "^15.4.2",
     "react-absolute-grid": "^3.0.0",
     "react-addons-css-transition-group": "^15.4.2",
@@ -92,7 +93,8 @@
     "dev:server": "webpack-dev-server --history-api-fallback",
     "build": "node_modules/.bin/cross-env NODE_ENV=production UV_THREADPOOL_SIZE=100 webpack --config webpack.config.js",
     "deploy": "gh-pages -d build",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "prod:build": "webpack --optimize-minimize --progress --colors"
   },
   "license": "MIT",
   "homepage": "https://github.com/react-toolbox/react-toolbox-example#readme"
