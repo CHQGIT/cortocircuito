@@ -82,8 +82,10 @@
     "postcss-loader": "^1.2.2",
     "postcss-mixins": "^5.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
+    "react-toolbox-themr": "^1.0.2",
     "redux-devtools-extension": "^1.0.0",
     "style-loader": "^0.13.1",
+    "toolbox-loader": "0.0.3",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0"
   },
@@ -94,7 +96,11 @@
     "build": "node_modules/.bin/cross-env NODE_ENV=production UV_THREADPOOL_SIZE=100 webpack --config webpack.config.js",
     "deploy": "gh-pages -d build",
     "gulp": "gulp",
-    "prod:build": "webpack --optimize-minimize --progress --colors"
+    "prod:build": "webpack --optimize-minimize --progress --colors",
+    "toolbox": "react-toolbox-themr"
+  },
+  "reactToolbox": {
+    "output": "src/css/toolbox"
   },
   "license": "MIT",
   "homepage": "https://github.com/react-toolbox/react-toolbox-example#readme"

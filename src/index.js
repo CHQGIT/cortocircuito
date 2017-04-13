@@ -5,14 +5,17 @@ import { AppContainer } from 'react-hot-loader';
 import { overrideComponentTypeChecker } from 'react-toolbox';
 
 import Cortocircuito from './components/Cortocircuito';
-
+import theme from './css/toolbox/theme';
+import ThemeProvider from 'react-toolbox/lib/ThemeProvider';
 
 const rootEl = document.getElementById('app');
 
 const render = () => {
   ReactDOM.render(
     <AppContainer>
-      <Cortocircuito />
+      <ThemeProvider theme={theme}>
+        <Cortocircuito />
+        </ThemeProvider>
     </AppContainer>,
     rootEl
   );
