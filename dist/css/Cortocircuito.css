@@ -106,7 +106,7 @@
 
 .wrapper_body_right { width: 70%; height: inherit; }
 
-.element_container { border: #da291c 1px dashed; display: flex; justify-content: center; margin: 1em; height: 5em; align-items: center; flex-direction: column; padding: 0em 1em 1em; }
+.element_container { border: #da291c 1px dashed; display: flex; justify-content: center; margin: 1em; align-items: center; flex-direction: column; padding: 0em 1em 1em; }
 
 .element_wrapperTitle { display: flex; width: 100%; justify-content: space-between; }
 

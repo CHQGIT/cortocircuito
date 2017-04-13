@@ -1,6 +1,9 @@
 @import 'tooltip';
 @import "node_modules/react-toolbox/lib/colors";
 @import "node_modules/react-toolbox/components/app_bar/theme";
+
+
+
 .wrapper_body{
   width: 100%;
   height: 100%;
@@ -29,7 +32,7 @@
   display: flex;
   justify-content: center;
   margin: 1em;
-  height: 5em;
+  //height: 5em;
   align-items: center;
   flex-direction: column;
   padding: 0em 1em 1em;
