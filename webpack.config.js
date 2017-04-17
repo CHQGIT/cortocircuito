@@ -1,11 +1,20 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const reactToolboxVariables = {
+  'color-text': '#444548',
+  /* Note that you can use global colors and variables */
+  'color-primary': 'var(--palette-red-500)',
+  'button-height': '30px',
+};
 
 const settings = {
   entry: {
     bundle: [
       "react-hot-loader/patch",
-      "./src/index.js"
+      "./src/index.js",
+      "./src/css/toolbox/theme.js"
     ]
   },
   output: {
@@ -59,7 +68,7 @@ const settings = {
           },
           "postcss-loader" // has separate config, see postcss.config.js nearby
         ]
-      },
+      }
     ]
   },
   externals: [
@@ -93,11 +102,36 @@ const settings = {
 
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
+
     new webpack.LoaderOptionsPlugin({
-      debug: true
+      debug: true,
+      options: {
+        context: path.join(__dirname, '../'),
+        postcss () {
+          return [
+            require('postcss-import')({
+              root: path.join(__dirname, '../src'),
+              path: [path.join(__dirname, '../src/components')]
+            }),
+            require('postcss-mixins')(),
+            require('postcss-each')(),
+            require('postcss-cssnext')({
+              features: {
+                customProperties: {
+                  variables: reactToolboxVariables,
+                },
+              }
+            }),
+            require('postcss-reporter')({
+              clearMessages: true
+            })
+          ];
+        }
+      }
     }),
+    new ExtractTextPlugin({ filename: 'spec.css', allChunks: true }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin()
   ],
 };
 

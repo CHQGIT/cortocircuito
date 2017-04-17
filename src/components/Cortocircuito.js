@@ -4,7 +4,6 @@ import Navigation from 'react-toolbox/lib/navigation';
 import Link from 'react-toolbox/lib/link';
 
 import theme from '../css/RedAppBar.scss';
-import themeInput from '../css/RedInput.scss';
 
 
 import Map from 'esri/map';
@@ -13,7 +12,7 @@ import {mapConfig} from '../services/config';
 
 import Tooltip from 'rc-tooltip';
 import {Button, IconButton} from 'react-toolbox/lib/button';
-import Input from 'react-toolbox/lib/input';
+import {Input} from 'react-toolbox/lib/input';
 
 const AppBarTest = () => (
   <AppBar title='Cortocircuito' theme={theme}></AppBar>
@@ -67,7 +66,7 @@ class Cortocircuito extends React.Component {
                 <h5 className="element_title">Paso 2/2: Active el botón de este formulario y seleccione el poste aéreo o cámara subterránea más cercana a su dirección.</h5>
                 <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Debe hacer zoom utilizando la rueda del mouse o los botones + / - del mapa hasta que pueda ver los recuadros de color gris  y rojo.<br/></span>}><IconButton icon='live_help'/></Tooltip>
               </div>
-              <Input theme={themeInput} disabled={this.state.posteDisabled} className="" onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
+              <Input disabled={this.state.posteDisabled} onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
                 name='cortocircuito_rotuloPoste' value={this.state.elementoPoste.rotulo} maxLength={200} />
 
             </div>
