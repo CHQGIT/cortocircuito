@@ -3,7 +3,8 @@ import {AppBar} from 'react-toolbox/lib/app_bar';
 import Navigation from 'react-toolbox/lib/navigation';
 import Link from 'react-toolbox/lib/link';
 
-import theme from '../css/RedAppBar.scss';
+
+import theme from '../css/RedAppBar.css';
 
 
 import Map from 'esri/map';
@@ -15,7 +16,7 @@ import {Button, IconButton} from 'react-toolbox/lib/button';
 import {Input} from 'react-toolbox/lib/input';
 
 const AppBarTest = () => (
-  <AppBar title='Cortocircuito' theme={theme}></AppBar>
+  <AppBar theme={theme} title='Cortocircuito'></AppBar>
 );
 
 class Cortocircuito extends React.Component {
@@ -25,7 +26,9 @@ class Cortocircuito extends React.Component {
       posteDisabled: false,
       elementoPoste: {
         rotulo: 111111
-      }
+      },
+      btnPosteDisabled: false,
+      btnSubirDatosDisabled: false
     }
   }
 
@@ -44,6 +47,14 @@ class Cortocircuito extends React.Component {
 
   handleChange(e){
     this.setState({elementoPoste: {rotulo: e} })
+  }
+
+  onClickPoste(e){
+
+  }
+
+  onClickSubirDatos(e){
+
   }
 
   render(){
@@ -66,10 +77,13 @@ class Cortocircuito extends React.Component {
                 <h5 className="element_title">Paso 2/2: Active el botón de este formulario y seleccione el poste aéreo o cámara subterránea más cercana a su dirección.</h5>
                 <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Debe hacer zoom utilizando la rueda del mouse o los botones + / - del mapa hasta que pueda ver los recuadros de color gris  y rojo.<br/></span>}><IconButton icon='live_help'/></Tooltip>
               </div>
-              <Input disabled={this.state.posteDisabled} onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
-                name='cortocircuito_rotuloPoste' value={this.state.elementoPoste.rotulo} maxLength={200} />
-
+              <div className="element_wrapperBody">
+                <Input disabled={this.state.posteDisabled} onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
+                  name='cortocircuito_rotuloPoste' value={this.state.elementoPoste.rotulo} maxLength={200} />
+                <Button onClick={this.onClickPoste.bind(this)} disabled={this.state.btnPosteDisabled} className="step2 btnSelect" raised icon= "format_size"></Button>
+                </div>
             </div>
+            <Button onClick={this.onClickSubirDatos.bind(this)} disabled={this.state.btnSubirDatosDisabled} className="step3 btnEnviar" label="Enviar Datos" raised primary icon= "send"></Button>
 
           </div>
           <div className="wrapper_body_right" id="map">

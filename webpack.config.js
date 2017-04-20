@@ -1,11 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const reactToolboxVariables = {
   'color-text': '#444548',
   /* Note that you can use global colors and variables */
-  'color-primary': 'var(--palette-red-500)',
+  'color-primary': 'rgb(218,41,28);',
   'button-height': '30px',
 };
 
@@ -13,14 +13,13 @@ const settings = {
   entry: {
     bundle: [
       "react-hot-loader/patch",
-      "./src/index.js",
-      "./src/css/toolbox/theme.js"
+      "./src/index.js"
     ]
   },
   output: {
     filename: "[name].js",
     publicPath: "/",
-    path: path.join(path.join(__dirname, 'dist'), 'js'),
+    path: path.join(path.join(__dirname, 'dist2'), 'js'),
     libraryTarget: "amd",
   },
   resolve: {
@@ -53,22 +52,39 @@ const settings = {
         }
       },
       {
-      //  test: /\.css$/,
-      test: /(\.scss|\.css)$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: "[name]--[local]--[hash:base64:8]"
-            }
-          },
-          "postcss-loader" // has separate config, see postcss.config.js nearby
-        ]
-      }
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+            use: [
+              {
+                loader: "css-loader",
+                options: {
+                  modules: true,
+                  sourceMap: true,
+                  importLoaders: 1,
+                  localIdentName: "[name]--[local]--[hash:base64:8]"
+                }
+              },
+              {
+                loader: "postcss-loader",
+                options: {
+                  plugins: function(){
+                    return [
+                      /* eslint-disable global-require */
+                      require('postcss-cssnext')({
+                        features: {
+                          customProperties: {
+                            variables: reactToolboxVariables,
+                          },
+                        },
+                      })
+                    ]
+                  }
+
+                }
+              }
+            ]
+        })
+      },
     ]
   },
   externals: [
@@ -83,6 +99,7 @@ const settings = {
           callback();
       }
   ],
+
   devServer: {
   //  contentBase: path.resolve("src/www"),
   //  publicPath: "http://localhost:8080/", // full URL is necessary for Hot Module Replacement if additional path will be added.
@@ -90,7 +107,6 @@ const settings = {
     hot: true,
     port: 443,
     host: "127.0.0.1",
-
     historyApiFallback: true,
     inline: true
     */
@@ -102,37 +118,15 @@ const settings = {
 
   },
   plugins: [
-
-    new webpack.LoaderOptionsPlugin({
-      debug: true,
-      options: {
-        context: path.join(__dirname, '../'),
-        postcss () {
-          return [
-            require('postcss-import')({
-              root: path.join(__dirname, '../src'),
-              path: [path.join(__dirname, '../src/components')]
-            }),
-            require('postcss-mixins')(),
-            require('postcss-each')(),
-            require('postcss-cssnext')({
-              features: {
-                customProperties: {
-                  variables: reactToolboxVariables,
-                },
-              }
-            }),
-            require('postcss-reporter')({
-              clearMessages: true
-            })
-          ];
-        }
-      }
-    }),
-    new ExtractTextPlugin({ filename: 'spec.css', allChunks: true }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin()
-  ],
+    new webpack.NamedModulesPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
+    new ExtractTextPlugin(('../css/style.css')),
+
+  ]
+
 };
 
 module.exports = settings;

@@ -83,3 +83,11 @@
 .element_title { font-family: Roboto,Helvetica,Arial,sans-serif; font-size: 14px; margin: 0.6em 1em; }
 
 .rc-tooltip { font-family: Arial; line-height: 2.5; }
+
+.element_wrapperBody { display: flex; justify-content: center; align-items: center; }
+
+.btnSelect { border-radius: 2px; min-width: 3em; padding: 0 12px; margin-left: 3em; }
+
+.btnEnviar { margin: 1em; flex-direction: row-reverse; display: flex; height: 3em; }
+
+.btnEnviar span { margin: 0.5em; }
