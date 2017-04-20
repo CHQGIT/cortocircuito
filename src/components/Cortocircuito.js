@@ -4,7 +4,7 @@ import Navigation from 'react-toolbox/lib/navigation';
 import Link from 'react-toolbox/lib/link';
 
 
-import theme from '../css/RedAppBar.css';
+import theme from '../css/RedAppBar.scss';
 
 
 import Map from 'esri/map';

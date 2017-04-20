@@ -52,7 +52,7 @@ const settings = {
         }
       },
       {
-        test: /\.css$/,
+        test: /(\.scss|\.css)$/,
         use: ExtractTextPlugin.extract({
             use: [
               {
