@@ -19,7 +19,7 @@ const settings = {
   output: {
     filename: "[name].js",
     publicPath: "/",
-    path: path.join(path.join(__dirname, 'dist2'), 'js'),
+    path: path.join(path.join(__dirname, 'dist'), 'js'),
     libraryTarget: "amd",
   },
   resolve: {
