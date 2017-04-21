@@ -16,13 +16,22 @@ import theme from '../css/RedAppBar.scss';
 import Map from 'esri/map';
 import Search from 'esri/dijit/Search';
 import BasemapToggle from "esri/dijit/BasemapToggle";
+import GraphicsLayer from 'esri/layers/GraphicsLayer';
+import IdentifyTask from "esri/tasks/IdentifyTask";
+import IdentifyParameters from "esri/tasks/IdentifyParameters";
+import arrayUtils from "dojo/_base/array";
+import InfoTemplate from "esri/InfoTemplate";
 
 //own
 import {mapConfig} from '../services/config';
 import layers from '../services/layers-service';
 import {factigisLoginVentaWeb} from '../services/parameters';
 import $ from 'jquery';
+import {factigis_findRotulo} from '../services/factigis_find-service';
 
+
+var map;
+var gLayerPoste = new GraphicsLayer();
 
 const AppBarTest = () => (
   <AppBar theme={theme} title='Cortocircuito'></AppBar>
@@ -33,14 +42,15 @@ class Cortocircuito extends React.Component {
     super(props);
     this.state = {
       posteDisabled: false,
-      elementoPoste: {
-        rotulo: 111111
-      },
+      elementosPoste: '',
       btnPosteDisabled: false,
       btnSubirDatosDisabled: false,
       activeSnackbar: false,
       snackbarIcon: '',
-      snackbarMessage: ''
+      snackbarMessage: '',
+      btnPoste: '',
+      allElements: '',
+      soloRotulo: ''
     }
   }
 
@@ -51,7 +61,7 @@ class Cortocircuito extends React.Component {
     factigisLoginVentaWeb('vialactea\\ehernanr',"Chilquinta9",(cb)=>{
       //show everything.
       if(cb[0]){
-        var map = new Map("map",{
+        map = new Map("map",{
           basemap: mapConfig.basemap,
           center: mapConfig.center,
           zoom: mapConfig.zoom
@@ -75,16 +85,18 @@ class Cortocircuito extends React.Component {
 
         var search = new Search({
           map: map,
+          zoomScale: 1000
         }, "search");
         search.startup();
-
+        $(".paso2").css("visibility","visible")
         search.on('select-result',(e)=>{
-          console.log("seleccionado resultado",e);
+          //console.log("zoom",search.zoomScale)
+          //console.log("seleccionado resultado",e);
           $(".paso2").css("visibility","visible")
         });
 
         search.on("clear-search",(e)=>{
-            $(".paso2").css("visibility","hidden")
+            $(".paso2").css("visibility","visible")
         });
 
       }else{
@@ -102,13 +114,79 @@ class Cortocircuito extends React.Component {
 
   onClickPoste(e){
 
+    gLayerPoste.clear();
+    //$(".factigisVE_progressBar").css('display','flex');
+    //$(".factigisVE_btnPaso2").css('color','red');
+    dojo.disconnect(this.state.btnPoste);
+
+    if(this.state.activeSnackbar){
+      this.setState({activeSnackbar: false});
+    }
+
+     var map_click_handle = dojo.connect(map, 'onClick', (event)=>{
+      this.setState({btnPoste: map_click_handle});
+
+    //   $('.drawer_progressBar2').css('visibility',"visible");
+      var identifyTask, identifyParams;
+        identifyTask = new IdentifyTask(layers.read_rotulos());
+        identifyParams = new IdentifyParameters();
+        identifyParams.tolerance = 10;
+        identifyParams.returnGeometry = true;
+        identifyParams.layerIds = [0, 1];
+        identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+        identifyParams.width = map.width;
+        identifyParams.height = map.height;
+        identifyParams.geometry = event.mapPoint;
+        identifyParams.mapExtent = map.extent;
+
+
+         //Usar promises para obtener resultados de parametros de identificación sobre los layers 0 y 1
+          var deferred = identifyTask.execute(identifyParams, (callback)=>{
+            if(!callback.length){
+              console.log("no hay length", callback);
+              //$('.drawer_progressBar2').css('visibility',"hidden");
+              this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
+            }else{
+              this.onClickSubirDatos(callback);
+            }
+
+          },(errback)=>{console.log("ee",errback);});
+
+          deferred.addCallback((response)=>{
+
+          //filtra solo postes
+          let soloPostes = response.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste'});
+          var rotulo;
+          //retorna elemento a defered con su respectivo infotemplate
+            return arrayUtils.map(soloPostes, function (result) {
+
+              var feature = result.feature;
+              rotulo = result.feature.attributes.rotulo
+
+              var luminariasTemplate = new InfoTemplate("Rotulo: ${rotulo}","Comuna: ${comuna} <br />");
+              feature.setInfoTemplate(luminariasTemplate);
+              return feature;
+            });
+          
+        });
+
+        map.infoWindow.setFeatures([deferred]);
+        map.infoWindow.show(event.mapPoint);
+        console.log(this.state.soloRotulo);
+
+    });
+
   }
 
-  onClickSubirDatos(e){
+  onClickSubirDatos(cb){
 
+    let soloPostes = cb.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste'});
+    console.log(soloPostes);
+    //this.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
   }
 
   handleSnackbarClick = () => {
+
     this.setState({activeSnackbar: false});
   };
 
@@ -123,8 +201,8 @@ class Cortocircuito extends React.Component {
             {/* step 1 */}
             <div className="element_container paso1">
               <div className="element_wrapperTitle">
-                <h5 className="element_title">Paso 1/2: Ingrese su dirección y presione el botón buscar para encontrar su dirección en el mapa.</h5>
-                <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Debe hacer zoom utilizando la rueda del mouse o los botones + / - del mapa hasta que pueda ver los recuadros de color gris  y rojo.<br/></span>}><IconButton icon='live_help'/></Tooltip>
+                <h5 className="element_title">Paso 1/2: Ingrese su dirección y presione el botón buscar para localizarla en el mapa.</h5>
+                <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Utilice el zoom usando la rueda del mouse o los botones + / - del mapa hasta que pueda ver los postes o cámaras de color gris o negro.<br/></span>}><IconButton icon='live_help'/></Tooltip>
               </div>
               <div className="element_search" id="search"></div>
             </div>
@@ -133,11 +211,11 @@ class Cortocircuito extends React.Component {
             <div className="element_container paso2">
               <div className="element_wrapperTitle">
                 <h5 className="element_title">Paso 2/2: Active el botón de este formulario y seleccione el poste aéreo o cámara subterránea más cercana a su dirección.</h5>
-                <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Debe hacer zoom utilizando la rueda del mouse o los botones + / - del mapa hasta que pueda ver los recuadros de color gris  y rojo.<br/></span>}><IconButton icon='live_help'/></Tooltip>
+                <Tooltip className="element_tooltip" placement="right" trigger={['hover']} overlay={<span>Debe seleccionar un poste o cámara desde el mapa. Utilice el zoom para poder visualizar los elementos poste o cámara de color gris o negro.<br/></span>}><IconButton icon='live_help'/></Tooltip>
               </div>
               <div className="element_wrapperBody">
                 <Input disabled={this.state.posteDisabled} onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
-                  name='cortocircuito_rotuloPoste' value={this.state.elementoPoste.rotulo} maxLength={200} />
+                  name='cortocircuito_rotuloPoste' value={this.state.soloRotulo} maxLength={200} />
                 <Button onClick={this.onClickPoste.bind(this)} disabled={this.state.btnPosteDisabled} className="step2 btnSelect" raised icon= "format_size"></Button>
                 </div>
             </div>
