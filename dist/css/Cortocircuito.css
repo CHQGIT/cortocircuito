@@ -91,3 +91,7 @@
 .btnEnviar { margin: 1em; flex-direction: row-reverse; display: flex; height: 3em; }
 
 .btnEnviar span { margin: 0.5em; }
+
+#BasemapToggle { display: block; position: absolute; z-index: 1; top: 1em; right: 1em; }
+
+.paso2 { visibility: hidden; }
