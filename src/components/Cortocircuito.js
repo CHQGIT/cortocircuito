@@ -9,6 +9,7 @@ import {AppBar} from 'react-toolbox/lib/app_bar';
 import Navigation from 'react-toolbox/lib/navigation';
 import Link from 'react-toolbox/lib/link';
 
+
 //own custom css
 import theme from '../css/RedAppBar.scss';
 
@@ -23,7 +24,7 @@ import arrayUtils from "dojo/_base/array";
 import InfoTemplate from "esri/InfoTemplate";
 
 //own
-import {mapConfig} from '../services/config';
+import {mapConfig, creds} from '../services/config';
 import layers from '../services/layers-service';
 import {factigisLoginVentaWeb} from '../services/parameters';
 import $ from 'jquery';
@@ -41,7 +42,7 @@ class Cortocircuito extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      posteDisabled: false,
+      posteDisabled: true,
       elementosPoste: '',
       btnPosteDisabled: false,
       btnSubirDatosDisabled: false,
@@ -52,13 +53,14 @@ class Cortocircuito extends React.Component {
       allElements: '',
       soloRotulo: ''
     }
+
+    this.onSaveData = this.onSaveData.bind(this);
   }
 
   componentDidMount(){
-    /*let u ='vialactea\\usrgis';
-    let p ="N3L4y5HZ";
-    */
-    factigisLoginVentaWeb('vialactea\\ehernanr',"Chilquinta9",(cb)=>{
+  creds
+
+    factigisLoginVentaWeb(creds.u,creds.p,(cb)=>{
       //show everything.
       if(cb[0]){
         map = new Map("map",{
@@ -88,19 +90,19 @@ class Cortocircuito extends React.Component {
           zoomScale: 1000
         }, "search");
         search.startup();
-        $(".paso2").css("visibility","visible")
+        $(".paso2").css("visibility","visible");
+
         search.on('select-result',(e)=>{
-          //console.log("zoom",search.zoomScale)
-          //console.log("seleccionado resultado",e);
           $(".paso2").css("visibility","visible")
         });
 
         search.on("clear-search",(e)=>{
-            $(".paso2").css("visibility","visible")
+            $(".paso2").css("visibility","visible");
+            this.setState({soloRotulo: ""});
         });
 
       }else{
-          this.setState({snackbarMessage: "Hubo un problema al inicializar la aplicación. Contáctese con el administrador/desarrollador del sistema.", activeSnackbar: true, snackbarIcon: 'error' });
+        this.setState({snackbarMessage: "Hubo un problema al inicializar la aplicación. Contáctese con el administrador/desarrollador del sistema.", activeSnackbar: true, snackbarIcon: 'error' });
       }
 
     });
@@ -113,7 +115,8 @@ class Cortocircuito extends React.Component {
   }
 
   onClickPoste(e){
-
+    $("#btnSeleccionarPoste").addClass("selected");
+    $(".progressbar_status").css("visibility","visible");
     gLayerPoste.clear();
     //$(".factigisVE_progressBar").css('display','flex');
     //$(".factigisVE_btnPaso2").css('color','red');
@@ -147,19 +150,24 @@ class Cortocircuito extends React.Component {
               //$('.drawer_progressBar2').css('visibility',"hidden");
               this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
             }else{
-              this.onClickSubirDatos(callback);
+              this.onSaveData(callback);
             }
-
-          },(errback)=>{console.log("ee",errback);});
+            dojo.disconnect(this.state.btnPoste);
+            $("#btnSeleccionarPoste").removeClass("selected");
+            $(".progressbar_status").css("visibility","hidden");
+          },(errback)=>{
+            console.log("ee",errback);
+            $("#btnSeleccionarPoste").removeClass("selected");
+            $(".progressbar_status").css("visibility","hidden");
+          });
 
           deferred.addCallback((response)=>{
 
           //filtra solo postes
-          let soloPostes = response.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste'});
+          let soloPostes = response.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
           var rotulo;
           //retorna elemento a defered con su respectivo infotemplate
             return arrayUtils.map(soloPostes, function (result) {
-
               var feature = result.feature;
               rotulo = result.feature.attributes.rotulo
 
@@ -167,22 +175,36 @@ class Cortocircuito extends React.Component {
               feature.setInfoTemplate(luminariasTemplate);
               return feature;
             });
-          
+
         });
 
         map.infoWindow.setFeatures([deferred]);
         map.infoWindow.show(event.mapPoint);
-        console.log(this.state.soloRotulo);
+
 
     });
 
   }
 
-  onClickSubirDatos(cb){
-
-    let soloPostes = cb.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste'});
+  onSaveData(cb){
+    let soloPostes = cb.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
     console.log(soloPostes);
-    //this.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
+    this.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
+
+  }
+
+  onClickSubirDatos(){
+    if(!this.state.soloRotulo==""){
+      window.location='http://ventaservicios.pruebas/online/getParametros.php?rotulo='+
+            this.state.soloRotulo +
+            '&certificadoCC=' +
+            1;
+
+      window.close();
+    }
+    this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
+    return;
+
   }
 
   handleSnackbarClick = () => {
@@ -197,7 +219,7 @@ class Cortocircuito extends React.Component {
         <AppBarTest />
         <div className="wrapper_body">
           <div className="wrapper_body_left">
-
+            <ProgressBar type="linear" mode="indeterminate" className="progressbar_status" />
             {/* step 1 */}
             <div className="element_container paso1">
               <div className="element_wrapperTitle">
@@ -215,8 +237,8 @@ class Cortocircuito extends React.Component {
               </div>
               <div className="element_wrapperBody">
                 <Input disabled={this.state.posteDisabled} onChange={this.handleChange.bind(this)}  type='text' label='* Rótulo de poste'
-                  name='cortocircuito_rotuloPoste' value={this.state.soloRotulo} maxLength={200} />
-                <Button onClick={this.onClickPoste.bind(this)} disabled={this.state.btnPosteDisabled} className="step2 btnSelect" raised icon= "format_size"></Button>
+                  name='cortocircuito_rotuloPoste' value={this.state.soloRotulo} className="inputCss" />
+                <Button id="btnSeleccionarPoste" onClick={this.onClickPoste.bind(this)} disabled={this.state.btnPosteDisabled} className="step2 btnSelect" raised icon= "format_size"></Button>
                 </div>
             </div>
             <Button onClick={this.onClickSubirDatos.bind(this)} disabled={this.state.btnSubirDatosDisabled} className="step3 btnEnviar" label="Enviar Datos" raised primary icon= "send"></Button>

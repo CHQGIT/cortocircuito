@@ -95,3 +95,13 @@
 #BasemapToggle { display: block; position: absolute; z-index: 1; top: 1em; right: 1em; }
 
 .paso2 { visibility: hidden; }
+
+.selected { border: 1px solid #da291c !important; color: #da291c !important; }
+
+.progressbar_status { visibility: hidden; }
+
+.inputCss { color: black !important; }
+
+.theme--label--3NjcGeFj { color: rgba(0, 0, 0, 0.56) !important; }
+
+.theme--disabled--2sOZC5ES > .theme--inputElement--2WvFsoYo { color: rgba(0, 0, 0, 0.56) !important; }
