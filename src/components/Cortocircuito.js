@@ -54,11 +54,9 @@ class Cortocircuito extends React.Component {
       soloRotulo: ''
     }
 
-    this.onSaveData = this.onSaveData.bind(this);
   }
 
   componentDidMount(){
-  creds
 
     factigisLoginVentaWeb(creds.u,creds.p,(cb)=>{
       //show everything.
@@ -142,15 +140,20 @@ class Cortocircuito extends React.Component {
         identifyParams.geometry = event.mapPoint;
         identifyParams.mapExtent = map.extent;
 
-
+        var that = this;
          //Usar promises para obtener resultados de parametros de identificación sobre los layers 0 y 1
           var deferred = identifyTask.execute(identifyParams, (callback)=>{
             if(!callback.length){
               console.log("no hay length", callback);
               //$('.drawer_progressBar2').css('visibility',"hidden");
-              this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
+              that.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
             }else{
-              this.onSaveData(callback);
+              //this.onSaveData(callback);
+              //console.log(callback);
+              let soloPostes = callback.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
+              //console.log(soloPostes);
+
+              that.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
             }
             dojo.disconnect(this.state.btnPoste);
             $("#btnSeleccionarPoste").removeClass("selected");
@@ -165,11 +168,11 @@ class Cortocircuito extends React.Component {
 
           //filtra solo postes
           let soloPostes = response.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
-          var rotulo;
+
           //retorna elemento a defered con su respectivo infotemplate
             return arrayUtils.map(soloPostes, function (result) {
               var feature = result.feature;
-              rotulo = result.feature.attributes.rotulo
+              var rotulo = result.feature.attributes.rotulo
 
               var luminariasTemplate = new InfoTemplate("Rotulo: ${rotulo}","Comuna: ${comuna} <br />");
               feature.setInfoTemplate(luminariasTemplate);
@@ -183,13 +186,6 @@ class Cortocircuito extends React.Component {
 
 
     });
-
-  }
-
-  onSaveData(cb){
-    let soloPostes = cb.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
-    console.log(soloPostes);
-    this.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
 
   }
 
@@ -211,6 +207,7 @@ class Cortocircuito extends React.Component {
 
     this.setState({activeSnackbar: false});
   };
+
 
 
   render(){
