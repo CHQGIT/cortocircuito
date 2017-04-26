@@ -93,13 +93,12 @@
     "webpack-dev-server": "^2.2.0"
   },
   "scripts": {
-    "sturto": "node_modules/.bin/cross-env NODE_ENV=development node_modules/.bin/webpack-dev-server --colors --config webpack.config.js",
+    "dev": "node_modules/.bin/cross-env NODE_ENV=development node_modules/.bin/webpack-dev-server --colors --config webpack.config.js",
     "start": "start npm run dev:server & start npm run gulp",
     "dev:server": "webpack-dev-server --history-api-fallback",
-    "build": "node_modules/.bin/cross-env NODE_ENV=production UV_THREADPOOL_SIZE=100 webpack --config webpack.config.js",
     "deploy": "gh-pages -d build",
     "gulp": "gulp",
-    "prod:build": "webpack --optimize-minimize --progress --colors",
+    "prod:build": "node_modules/.bin/cross-env NODE_ENV=production UV_THREADPOOL_SIZE=100 webpack --optimize-minimize --progress --colors --config  webpack.config.js",
     "toolbox": "react-toolbox-themr"
   },
   "reactToolbox": {

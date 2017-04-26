@@ -151,7 +151,7 @@ class Cortocircuito extends React.Component {
               //this.onSaveData(callback);
               //console.log(callback);
               let soloPostes = callback.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
-              //console.log(soloPostes);
+              console.log(soloPostes);
 
               that.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
             }
@@ -207,7 +207,6 @@ class Cortocircuito extends React.Component {
 
     this.setState({activeSnackbar: false});
   };
-
 
 
   render(){

@@ -124,7 +124,10 @@ const settings = {
       debug: true
     }),
     new ExtractTextPlugin(('../css/style.css')),
-
+    new webpack.DefinePlugin({
+          "environment": '"production"',
+          NODE_ENV: JSON.stringify("production")
+        })
   ]
 
 };
