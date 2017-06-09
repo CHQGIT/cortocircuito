@@ -1,35 +1,10 @@
 {
-  "name": "react-toolbox-example",
-  "description": "A set of complementary tools to ReactJS.",
+  "name": "Cortocircuito",
+  "description": "Aplicación para certificado de Cortocircuito chq",
   "version": "0.12.0",
   "author": {
-    "name": "React Toolbox Team",
-    "url": "http://github.com/react-toolbox"
-  },
-  "contributors": [
-    {
-      "name": "Javi Jimenez Villar",
-      "email": "javi.jimenez.villar@gmail.com",
-      "url": "http://soyjavi.com/"
-    },
-    {
-      "name": "Javi Velasco Arjona",
-      "email": "javier.velasco86@gmail.com",
-      "url": "http://javivelasco.com/"
-    },
-    {
-      "name": "Oleg Stepura",
-      "email": "oleg[at]stepura.com",
-      "url": "http://oleg.stepura.com/"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/react-toolbox/react-toolbox-example.git"
-  },
-  "bugs": {
-    "url": "https://github.com/react-toolbox/react-toolbox/issues",
-    "email": "issues@react-toolbox.com"
+    "name": "Evelyn Hernandez",
+    "url": ""
   },
   "keywords": [
     "components",

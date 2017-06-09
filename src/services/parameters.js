@@ -82,30 +82,7 @@ function getFormatedDate(){
 
 
 
-function saveGisredLogin(user, fech, page, mod, tkn){
-
-  const data = {
-    f: 'json',
-    adds: JSON.stringify([{ attributes: { "usuario": user, fecha: fech , "pagina": page, "modulo": mod  }, geometry: {} }]),
-    token: tkn
-  };
-
-  jQuery.ajax({
-    method: 'POST',
-    url: myLayers.read_logAccessFactigis(),
-    dataType:'html',
-    data: data
-  })
-  .done(d =>{
-    //console.log(d,"pase");
-    console.log("")
-  })
-  .fail(f=>{
-    console.log(f,"no pase");
-    console.log("Error adding logReg")
-  });
-}
 
 
 
-export {factigisLoginVentaWeb, saveGisredLogin, getFormatedDate};
+export {factigisLoginVentaWeb,  getFormatedDate};

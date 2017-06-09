@@ -29,7 +29,7 @@ import layers from '../services/layers-service';
 import {factigisLoginVentaWeb} from '../services/parameters';
 import $ from 'jquery';
 import {factigis_findRotulo} from '../services/factigis_find-service';
-
+import env from '../services/config';
 
 var map;
 var gLayerPoste = new GraphicsLayer();
@@ -190,8 +190,9 @@ class Cortocircuito extends React.Component {
   }
 
   onClickSubirDatos(){
+
     if(!this.state.soloRotulo==""){
-      window.location='http://ventaservicios.pruebas/online/getParametros.php?rotulo='+
+      window.location=env.WPHP+'?rotulo='+
             this.state.soloRotulo +
             '&certificadoCC=' +
             1;

@@ -1,4 +1,5 @@
 import token from './token-service';
+import env from './config';
 
 
 
@@ -15,10 +16,12 @@ function myLayers(){
   //const serviceMain = 'http://gisred.chilquinta/arcgis/';
   //change this for external connection:
   //Cambios v0.6.1 prod factigisVE 31.03.2017
-  const serviceMain = 'http://gisred.chilquinta.cl:5555/arcgis/';
+  var serviceMain = 'http://gisred.chilquinta.cl:5555/arcgis/';
   const serviceURL = serviceMain + 'rest/services/';
   //var graphicLayer = new GraphicsLayer;
-
+  if(env.BUILDFOR='INTERNA'){
+    serviceMain = 'http://gisred.chilquinta/arcgis/';
+  }
   //check 8 and last one
   return {
 
@@ -78,7 +81,7 @@ function myLayers(){
       return serviceURL + "Chilquinta_006/Equipos_pto_006/MapServer/1?f=json&token=" + token.read();
     },
 
-  
+
     read_mapabase(){
       return serviceURL + "MapaBase/MapServer?f=json&token=" + token.read();
     },
