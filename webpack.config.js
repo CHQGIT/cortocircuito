@@ -27,8 +27,8 @@ const settings = {
     extensions: ['.scss', '.css', '.js', '.json','.webpack.js', '.web.js', '.js', '.jsx']
 
   },
-  //devtool: 'inline-source-map',
-  devtool: 'source-map',
+  //devtool: 'cheap-source-map',
+  //devtool: 'source-map'
   module: {
     rules: [
       {

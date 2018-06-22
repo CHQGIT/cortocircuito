@@ -27,7 +27,8 @@ const env = {
   SAVEAPPLICATIONMODULE: "CORTOCIRCUITO_PROD",
   SAVEAPPLICATIONNAME: 'REACT_CORTOCIRCUITO_PROD',
   BUILDFOR: 'EXTERNA',
-  WPHP: "http://ventasbeta.chilquinta.cl/online/getParametros.php"
+  //WPHP: "http://ventasbeta.chilquinta.cl/online/getParametros.php"
+  WPHP: "http://ventaservicios.pruebas/online/getParametros.php"
 }
 
 export default env;

@@ -51,7 +51,8 @@ class Cortocircuito extends React.Component {
       snackbarMessage: '',
       btnPoste: '',
       allElements: '',
-      soloRotulo: ''
+      soloRotulo: '',
+      comuna: ''
     }
 
   }
@@ -143,6 +144,7 @@ class Cortocircuito extends React.Component {
         var that = this;
          //Usar promises para obtener resultados de parametros de identificación sobre los layers 0 y 1
           var deferred = identifyTask.execute(identifyParams, (callback)=>{
+            console.log(callback,"tengo esto");
             if(!callback.length){
               console.log("no hay length", callback);
               //$('.drawer_progressBar2').css('visibility',"hidden");
@@ -153,7 +155,7 @@ class Cortocircuito extends React.Component {
               let soloPostes = callback.filter(ss=>{return ss.feature.attributes.tipo_nodo=='ele!poste' || ss.feature.attributes.tipo_nodo=='ele!camara'});
               console.log(soloPostes);
 
-              that.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo});
+              that.setState({soloRotulo: soloPostes[0].feature.attributes.rotulo, comuna:  soloPostes[0].feature.attributes.comuna});
             }
             dojo.disconnect(this.state.btnPoste);
             $("#btnSeleccionarPoste").removeClass("selected");
@@ -171,6 +173,7 @@ class Cortocircuito extends React.Component {
 
           //retorna elemento a defered con su respectivo infotemplate
             return arrayUtils.map(soloPostes, function (result) {
+
               var feature = result.feature;
               var rotulo = result.feature.attributes.rotulo
 
@@ -194,13 +197,13 @@ class Cortocircuito extends React.Component {
     if(!this.state.soloRotulo==""){
       window.location=env.WPHP+'?rotulo='+
             this.state.soloRotulo +
-            '&certificadoCC=' +
-            1;
+            '&certificadoCC=' + 1 + '&comuna=' + this.state.comuna;
 
       window.close();
+    }else{
+      this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
+
     }
-    this.setState({snackbarMessage: "Rótulos de poste o cámara en este punto no han sido encontrados. Haga clic en un poste o cámara para ver su información nuevamente.", activeSnackbar: true, snackbarIcon: 'close' });
-    return;
 
   }
 
